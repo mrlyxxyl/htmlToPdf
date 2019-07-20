@@ -11,7 +11,6 @@ import org.xhtmlrenderer.pdf.ITextImageElement;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,22 +22,21 @@ public class ImgReplacedElementFactory implements ReplacedElementFactory {
     public ReplacedElement createReplacedElement(LayoutContext c, BlockBox box, UserAgentCallback uac, int cssWidth, int cssHeight) {
         try {
             Element e = box.getElement();
-            if (e == null) {
-                return null;
-            }
-            String nodeName = e.getNodeName();
-            if (nodeName.equals("img")) {
-                String attribute = e.getAttribute("src");
-                FSImage fsImage;
-                fsImage = buildImage(attribute, uac);
-                if (fsImage != null) {
-                    if (cssWidth != -1 || cssHeight != -1) {
-                        fsImage.scale(cssWidth, cssHeight);
+            if (e != null) {
+                String nodeName = e.getNodeName();
+                if (nodeName.equals("img")) {
+                    String attribute = e.getAttribute("src");
+                    FSImage fsImage = buildImage(attribute);
+                    if (fsImage != null) {
+                        if (cssWidth != -1 || cssHeight != -1) {
+                            fsImage.scale(cssWidth, cssHeight);
+                        }
+                        return new ITextImageElement(fsImage);
                     }
-                    return new ITextImageElement(fsImage);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -46,17 +44,12 @@ public class ImgReplacedElementFactory implements ReplacedElementFactory {
     /**
      * 获取本地图片流生成内置图像
      */
-    protected FSImage buildImage(String srcAttr, UserAgentCallback uac) throws IOException, BadElementException {
+    protected FSImage buildImage(String srcAttr) throws IOException, BadElementException {
         String imageName = srcAttr.toLowerCase();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         InputStream stream = ImgReplacedElementFactory.class.getClassLoader().getResourceAsStream(imageName);
-        byte[] bytes = new byte[1024];
-        int len;
-        while ((len = stream.read(bytes)) > 0) {
-            outputStream.write(bytes, 0, len);
-        }
-        byte[] de = outputStream.toByteArray();
-        return new ITextFSImage(Image.getInstance(de));
+        byte[] bytes = new byte[stream.available()];
+        stream.read(bytes);
+        return new ITextFSImage(Image.getInstance(bytes));
     }
 
     public void reset() {
