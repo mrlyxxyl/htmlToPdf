@@ -45,11 +45,21 @@ public class ImgReplacedElementFactory implements ReplacedElementFactory {
      * 获取本地图片流生成内置图像
      */
     protected FSImage buildImage(String srcAttr) throws IOException, BadElementException {
-        String imageName = srcAttr.toLowerCase();
-        InputStream stream = ImgReplacedElementFactory.class.getClassLoader().getResourceAsStream(imageName);
-        byte[] bytes = new byte[stream.available()];
-        stream.read(bytes);
-        return new ITextFSImage(Image.getInstance(bytes));
+        InputStream stream = null;
+        try {
+            String imageName = srcAttr.toLowerCase();
+            stream = ImgReplacedElementFactory.class.getClassLoader().getResourceAsStream(imageName);
+            byte[] bytes = new byte[stream.available()];
+            stream.read(bytes);
+            return new ITextFSImage(Image.getInstance(bytes));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+        return null;
     }
 
     public void reset() {
