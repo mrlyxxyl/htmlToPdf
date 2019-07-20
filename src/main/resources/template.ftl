@@ -109,6 +109,10 @@
         .dyConFl p span {
             border-bottom: 2px solid #000
         }
+        
+        .p_text {
+            text-indent: 2em;
+        }
     </style>
 </head>
 <body>
@@ -131,7 +135,7 @@
             <p>发证日期：<span>${startTime}</span></p>
         </div>
         <div class="dyConFr">
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;于<span>${startTime}</span>云南省全流程电子化（招标/投标）从业人员培训，经考核合格，特发此证。</p>
+            <p class="p_text">于<span>${startTime}</span>云南省全流程电子化（招标/投标）从业人员培训，经考核合格，特发此证。</p>
 
             <p>
                 证书有效期：<span>${startTime}</span>至<span>${endTime}</span>
